@@ -11,8 +11,9 @@ from datetime import datetime as dt
 import utils.data_transforms
 # device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device='cpu'
+print(device)
 
-cfg.CONST.WEIGHTS='saved_model/Pix2Vox-A-ShapeNet.pth'
+cfg.CONST.WEIGHTS='saved_model/Pix2Vox.pth'
 
 
 def read_binvox(file) -> np.ndarray:
@@ -60,7 +61,7 @@ def predict_voxel_from_images(rendering_images):
             merger = torch.nn.DataParallel(merger).cuda()
 
     print('[INFO] %s Loading weights from %s ...' % (dt.now(), cfg.CONST.WEIGHTS))
-    checkpoint = torch.load(cfg.CONST.WEIGHTS)
+    checkpoint = torch.load(cfg.CONST.WEIGHTS,map_location=device)
 
     epoch_idx = checkpoint['epoch_idx']
     encoder.load_state_dict(checkpoint['encoder_state_dict'])
