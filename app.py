@@ -9,6 +9,8 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
+from helpers import *
+
 
 st.set_page_config(page_title="3D Reconstruction Web App", layout="wide")
 st.markdown("<div style='text-align: center;'><h1>3D Scene Reconstruction</h1></div>", unsafe_allow_html=True)
@@ -77,7 +79,7 @@ with col1:
     st.image("media/WhatsApp Image 2025-04-12 at 17.40.27_1137ddf7.jpg", width=400, caption="Input Image")
 
 with col2:
-    st.image("media/rotation_sfm_cam_1_2_3_4[1].gif", width=400, caption="3D Reconstruction") 
+    st.image("media/rotation_sfm_cam_1_2_3_4[1].gif", width=400, caption="3D Reconstruction")
 
 st.subheader("6. Gaussian Splatting Method")
 # col1, col2 = st.columns(2)
@@ -86,7 +88,7 @@ st.subheader("6. Gaussian Splatting Method")
 #     st.image("WhatsApp Image 2025-04-12 at 17.40.27_1137ddf7.jpg", width=400, caption="Input Image")
 
 # with col2:
-st.image("media/gs.gif", width=400, caption="3D Reconstruction")         
+st.image("media/gs.gif", width=400, caption="3D Reconstruction")
 
 
 
@@ -183,10 +185,10 @@ if sc_zip:
     if st.button("Run Space Carving Model"):
         output = run_space_carving()  # This should generate the .vtr file
         st.success("Model ran successfully.")
-    
+
         # Path to generated .vtr file
         vtr_path = "res_space/shape.vtr"  # Update if filename differs
-    
+
         if os.path.exists(vtr_path):
             st.markdown("### 📥 Download Space Carved VTR File")
             with open(vtr_path, "rb") as f:
@@ -219,7 +221,7 @@ if sfm_zip_file is not None:
     st.success(f"Extracted {zip_name} dataset.")
 
     if st.button("Run SfM Model"):
-        output = run_sfm(sfm_extract_path + "\\" + zip_name) 
+        output = run_sfm(sfm_extract_path + "\\" + zip_name)
         st.success("Model ran successfully.")
 
         # Construct PLY path based on zip filename
@@ -244,4 +246,42 @@ if sfm_zip_file is not None:
         if os.path.exists(ply_path):
             st.markdown("### 🧩 Reconstructed Point Cloud (Interactive)")
             fig = show_ply_interactive(ply_path)
-            st.plotly_chart(fig, use_container_width=True)    
+            st.plotly_chart(fig, use_container_width=True)
+
+
+
+
+
+# --- APP START ---
+st.title("2D → 3D Voxel Reconstruction Viewer")
+
+uploaded_images = st.file_uploader(f"Upload images", accept_multiple_files=True, type=["png", "jpg", "jpeg"])
+# print(uploaded_images)
+
+
+# --- DISPLAY ---
+if uploaded_images:
+    st.subheader("Uploaded Input Views")
+    cols = st.columns(len(uploaded_images))
+    rendering_images = []
+
+    for i, uploaded_file in enumerate(uploaded_images):
+        img = Image.open(uploaded_file)
+
+        cols[i].image(img, caption=f"View {i+1}", use_container_width=True)
+
+        img_np = np.array(img).astype(np.float32) / 255.0
+
+        rendering_images.append(img_np)
+
+
+    if st.button("Submit for Reconstruction"):
+        gv=None
+        with st.spinner("Reconstructing..."):
+            gv = predict_voxel_from_images(rendering_images)
+
+        fig = voxel_to_plotly(gv)
+        st.plotly_chart(fig, use_container_width=True)
+
+else:
+    st.info(f"Upload images to continue.")
