@@ -1,0 +1,12 @@
+streamlit
+numpy
+opencv-python
+scipy
+matplotlib
+tomlkit
+tqdm
+opencv-contrib-python
+tomlkit
+open3d
+plotly
+vtk
