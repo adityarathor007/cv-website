@@ -251,9 +251,7 @@ if sfm_zip_file is not None:
 
 
 
-
-# --- APP START ---
-st.title("2D → 3D Voxel Reconstruction Viewer")
+st.header("🧠 Pix2Vox")
 
 uploaded_images = st.file_uploader(f"Upload images", accept_multiple_files=True, type=["png", "jpg", "jpeg"])
 # print(uploaded_images)

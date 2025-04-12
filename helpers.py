@@ -9,8 +9,8 @@ from config import cfg
 import torch
 from datetime import datetime as dt
 import utils.data_transforms
-# device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device='cpu'
+device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# device='cpu'
 print(device)
 
 cfg.CONST.WEIGHTS='saved_model/Pix2Vox.pth'
