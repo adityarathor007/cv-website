@@ -53,3 +53,8 @@ opencv-contrib-python
 streamlit
 matplotlib
 open3d
+argparse
+easydict
+torch
+torchvision
+
